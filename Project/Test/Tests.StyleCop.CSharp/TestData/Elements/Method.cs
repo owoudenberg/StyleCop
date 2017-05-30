@@ -592,6 +592,8 @@ public class Class8<T, S>
             var (fname, lname) = person;
 
             var (_, lname) = person;
+
+            (fname, lname) = person;
     }
 }
 

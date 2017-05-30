@@ -11,3 +11,4 @@ TestBin/
 Build.*.err
 Build.*.wrn
 /.vs
+/Project/_ReSharper.Caches/*

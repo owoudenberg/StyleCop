@@ -35,7 +35,7 @@ namespace StyleCop.CSharp
         /// <summary>
         /// The variable declarations that form the Tuple type.
         /// </summary>
-        private readonly IList<VariableDeclarationExpression> variableDeclarations;
+        private readonly IList<Expression> variableDeclarations;
 
         #endregion
         
@@ -73,7 +73,7 @@ namespace StyleCop.CSharp
         /// <param name="variableDeclarations">
         /// The variable declaration in the Tuple type.
         /// </param>
-        internal TupleExpression(CsTokenList tokens, IList<VariableDeclarationExpression> variableDeclarations)
+        internal TupleExpression(CsTokenList tokens, IList<Expression> variableDeclarations)
             : base(ExpressionType.Tuple, tokens)
         {
             Param.AssertNotNull(variableDeclarations, nameof(variableDeclarations));
@@ -99,7 +99,7 @@ namespace StyleCop.CSharp
         /// <summary>
         /// Gets the list of variable declarations that form the Tuple Type.
         /// </summary>
-        public IList<VariableDeclarationExpression> VariableDeclarations => this.variableDeclarations;
+        public IList<Expression> VariableDeclarations => this.variableDeclarations;
 
         #endregion
     }

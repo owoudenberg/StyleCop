@@ -3476,25 +3476,40 @@ namespace StyleCop.CSharp
             Node<CsToken> openParenthesisNode = this.tokens.InsertLast(openParenthesis);
 
             // Get the list of arguments.
-            List<VariableDeclarationExpression> variables = new List<VariableDeclarationExpression>();
+            List<Expression> variables = new List<Expression>();
 
             Symbol symbol = this.GetNextSymbol(expressionReference);
 
             while (symbol.SymbolType != SymbolType.CloseParenthesis)
             {
                 Expression variableType;
+                Expression variableExpression;
+
                 if (isVar)
                 {
                     // Keep using the var expression for every variable declaration.
                     variableType = varExpression;
+                    variableExpression = this.GetSingleVariableDeclarationExpression(variableType, ExpressionPrecedence.None, unsafeCode);
                 }
                 else
                 {
                     // Get the variable type and declaration.
-                    variableType = this.GetNextExpression(ExpressionPrecedence.None, expressionReference, unsafeCode);
+                    int nextPosition;
+                    Symbol variableSymbol = this.PeekNextSymbolFrom(0, SkipSymbols.All, false, out nextPosition);
+                    Symbol declarationSymbol = this.PeekNextSymbolFrom(nextPosition, SkipSymbols.All, false, out nextPosition);
+
+                    if (declarationSymbol.SymbolType == SymbolType.Comma || declarationSymbol.SymbolType == SymbolType.CloseParenthesis)
+                    {
+                        variableExpression = this.GetNextExpression(ExpressionPrecedence.None, expressionReference, unsafeCode);
+                    }
+                    else
+                    {
+                        variableType = this.GetNextExpression(ExpressionPrecedence.None, expressionReference, unsafeCode);
+                        variableExpression = this.GetSingleVariableDeclarationExpression(variableType, ExpressionPrecedence.None, unsafeCode);
+                    }
                 }
 
-                variables.Add(this.GetSingleVariableDeclarationExpression(variableType, ExpressionPrecedence.None, unsafeCode));
+                variables.Add(variableExpression);
 
                 // Now check if the next character is a comma. If so there is another variable declared.
                 symbol = this.GetNextSymbol(expressionReference);
