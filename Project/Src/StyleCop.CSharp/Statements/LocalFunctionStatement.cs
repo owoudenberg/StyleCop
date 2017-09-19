@@ -57,8 +57,13 @@ namespace StyleCop.CSharp
         /// </summary>
         private readonly CodeUnit functionBody;
 
+        /// <summary>
+        /// Is this expression sync or async.
+        /// </summary>
+        private readonly bool asyncExpression;
+
         #endregion
-        
+
         #region Constructors and Destructors
 
         /// <summary>
@@ -72,6 +77,9 @@ namespace StyleCop.CSharp
         /// </param>
         /// <param name="returnTypeIsRef">
         /// The return type of this local function is ref.
+        /// </param>
+        /// <param name="asyncExpression">
+        /// The local function is async.
         /// </param>
         /// <param name="identifier">
         /// The identifier of this local function.
@@ -89,11 +97,12 @@ namespace StyleCop.CSharp
             CsTokenList tokens, 
             TypeToken returnType, 
             bool returnTypeIsRef, 
+            bool asyncExpression,
             LiteralExpression identifier, 
             IList<Parameter> parameters,
             ICollection<TypeParameterConstraintClause> typeConstraints, 
             Expression functionBodyExpression)
-            : this(tokens, returnType, returnTypeIsRef, identifier, parameters, typeConstraints)
+            : this(tokens, returnType, returnTypeIsRef, asyncExpression, identifier, parameters, typeConstraints)
         {
             Param.AssertNotNull(functionBodyExpression, nameof(functionBodyExpression));
             this.functionBody = functionBodyExpression;
@@ -112,6 +121,9 @@ namespace StyleCop.CSharp
         /// <param name="returnTypeIsRef">
         /// The return type of this local function is ref.
         /// </param>
+        /// <param name="asyncExpression">
+        /// The local function is async.
+        /// </param>
         /// <param name="identifier">
         /// The identifier of this local function.
         /// </param>
@@ -128,11 +140,12 @@ namespace StyleCop.CSharp
             CsTokenList tokens, 
             TypeToken returnType, 
             bool returnTypeIsRef, 
+            bool asyncExpression,
             LiteralExpression identifier, 
             IList<Parameter> parameters,
             ICollection<TypeParameterConstraintClause> typeConstraints, 
             Statement functionBody)
-            : this(tokens, returnType, returnTypeIsRef, identifier, parameters, typeConstraints)
+            : this(tokens, returnType, returnTypeIsRef, asyncExpression, identifier, parameters, typeConstraints)
         {
             Param.AssertNotNull(functionBody, nameof(functionBody));
             this.functionBody = functionBody;
@@ -147,6 +160,9 @@ namespace StyleCop.CSharp
         /// </param>
         /// <param name="returnType">
         /// The return type of this local function.
+        /// </param>
+        /// <param name="asyncExpression">
+        /// The local function is async.
         /// </param>
         /// <param name="returnTypeIsRef">
         /// The return type of this local function is ref.
@@ -164,6 +180,7 @@ namespace StyleCop.CSharp
             CsTokenList tokens, 
             TypeToken returnType, 
             bool returnTypeIsRef, 
+            bool asyncExpression, 
             LiteralExpression identifier, 
             IList<Parameter> parameters,
             ICollection<TypeParameterConstraintClause> typeConstraints)
@@ -180,6 +197,7 @@ namespace StyleCop.CSharp
             this.identifier = identifier;
             this.parameters = parameters;
             this.typeConstraints = typeConstraints;
+            this.asyncExpression = asyncExpression;
 
             this.AddExpression(this.identifier);
 
@@ -226,6 +244,11 @@ namespace StyleCop.CSharp
         /// Gets the list of type constraints on the element, if any.
         /// </summary>
         public ICollection<TypeParameterConstraintClause> TypeConstraints => this.typeConstraints;
+
+        /// <summary>
+        /// Gets a value indicating whether this anonymous expression is async or sync.
+        /// </summary>
+        public bool Async => this.asyncExpression;
 
         #endregion
     }

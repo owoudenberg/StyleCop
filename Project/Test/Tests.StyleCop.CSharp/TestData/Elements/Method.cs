@@ -446,6 +446,14 @@ public class Class8<T, S>
             
             }
         }
+
+        private async Task AsyncLocalFunction()
+        {
+            async Task LocalFunction()
+            {
+
+            }
+        }
     }
 
 #endregion
@@ -544,6 +552,11 @@ public class Class8<T, S>
         (string first, string middle, string last) TupleTypeWithNameTest(long id)
         {
             return (first, middle, last); // tuple literal
+        }
+
+        public static (System.String first, System.Decimal last) TupleTypeWithNamespace(long id)
+        {
+            return (first, last);
         }
 
         // Local function which return tuple types 

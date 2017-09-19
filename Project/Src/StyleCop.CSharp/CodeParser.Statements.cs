@@ -366,7 +366,7 @@ namespace StyleCop.CSharp
                                 }
                             }
 
-                            if (this.IsLocalFunctionStatement(false))
+                            if (this.IsLocalFunctionStatement(symbol.Text == "async", false))
                             {
                                 statement = this.ParseLocalFunctionStatement(unsafeCode);
                                 break;
@@ -463,7 +463,7 @@ namespace StyleCop.CSharp
                             break;
 
                         case SymbolType.Ref:
-                            if (this.IsLocalFunctionStatement(true))
+                            if (this.IsLocalFunctionStatement(false, true))
                             {
                                 statement = this.ParseLocalFunctionStatement(unsafeCode);
                             }
@@ -564,20 +564,25 @@ namespace StyleCop.CSharp
         /// <summary>
         /// Determines if the current statement being examined is a local function statement.
         /// </summary>
+        /// <param name="isAsync">
+        /// Indicate if the check should be made for async local function.
+        /// </param>
         /// <param name="isRef">
         /// Indicate if the check should be made for ref local function.
         /// </param>
         /// <returns>
         /// True, if the statement is a local function, False if not.
         /// </returns>
-        private bool IsLocalFunctionStatement(bool isRef)
+        private bool IsLocalFunctionStatement(bool isAsync, bool isRef)
         {
+            Param.Ignore(isAsync);
             Param.Ignore(isRef);
+            
             SymbolType expectingNextSymbolType = SymbolType.Other;
 
             // If ref, then move past 'ref' + white space which would be the type declaration.
             // Othwerwise, the next symbol would be the type declaration.
-            int testPosition = isRef ? 3 : 1;
+            int testPosition = isAsync ? (isRef ? 5 : 3) : (isRef ? 3 : 1);
 
             int angleBracketCount = 0;
             int squareBracketCount = 0;
@@ -2741,6 +2746,14 @@ namespace StyleCop.CSharp
             // Check if the method's return type is ref.
             Symbol nextSymbol = this.PeekNextSymbol(SkipSymbols.All, false);
             bool returnTypeIsRef = false;
+            bool isAsync = false;
+
+            // First symbol could be 'async' for asynchronous delegates.
+            if (nextSymbol.SymbolType == SymbolType.Other && nextSymbol.Text == "async")
+            {
+                this.tokens.Add(this.GetToken(CsTokenType.Async, SymbolType.Other, statementReference));
+                isAsync = true;
+            }
 
             if (nextSymbol.SymbolType == SymbolType.Ref)
             {               
@@ -2783,6 +2796,7 @@ namespace StyleCop.CSharp
                     partialTokens, 
                     returnType, 
                     returnTypeIsRef, 
+                    isAsync,
                     name, 
                     parameters,
                     typeConstraints,
@@ -2795,6 +2809,7 @@ namespace StyleCop.CSharp
                     partialTokens,
                     returnType,
                     returnTypeIsRef,
+                    isAsync,
                     name,
                     parameters,
                     typeConstraints,

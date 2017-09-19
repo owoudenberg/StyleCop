@@ -1209,6 +1209,10 @@ namespace StyleCop.CSharp
                 {
                     typeTokens.Add(this.GetToken(CsTokenType.Other, SymbolType.Other, typeTokenReference));
                 }
+                else if (symbol.SymbolType == SymbolType.Dot || symbol.SymbolType == SymbolType.QualifiedAlias)
+                {
+                    typeTokens.Add(this.GetToken(CsTokenType.Other, symbol.SymbolType, typeTokenReference));
+                }
                 else if (symbol.SymbolType == SymbolType.Comma)
                 {
                     typeTokens.Add(this.GetToken(CsTokenType.Comma, SymbolType.Comma, typeTokenReference));

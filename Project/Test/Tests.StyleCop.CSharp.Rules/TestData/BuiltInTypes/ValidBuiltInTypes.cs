@@ -255,6 +255,7 @@ namespace ValidBuildInTypes
 
             // Default value
             object c = default(byte);
+            int i = default;
 
             // Sizeof
             int d = sizeof(object);

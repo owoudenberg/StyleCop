@@ -107,6 +107,7 @@
     <Compile Include="CsTokenList.cs" />
     <Compile Include="Elements\AssemblyOrModuleAttribute.cs" />
     <Compile Include="Expressions\AwaitExpression.cs" />
+    <Compile Include="Expressions\DefaultLiteralExpression.cs" />
     <Compile Include="Expressions\DictionaryInitializerExpression.cs" />
     <Compile Include="Expressions\CollectionInitializerExpression.cs" />
     <Compile Include="Expressions\EventDeclaratorExpression.cs" />

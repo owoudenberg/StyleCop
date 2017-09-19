@@ -1643,7 +1643,7 @@ namespace StyleCop.CSharp
         /// <returns>
         /// Returns the expression.
         /// </returns>
-        private DefaultValueExpression GetDefaultValueExpression(Reference<ICodePart> parentReference, bool unsafeCode)
+        private Expression GetDefaultValueExpression(Reference<ICodePart> parentReference, bool unsafeCode)
         {
             Param.AssertNotNull(parentReference, "parentReference");
             Param.Ignore(unsafeCode);
@@ -1653,29 +1653,43 @@ namespace StyleCop.CSharp
             // Get the default keyword.
             Node<CsToken> firstTokenNode = this.tokens.InsertLast(this.GetToken(CsTokenType.DefaultValue, SymbolType.Default, parentReference, expressionReference));
 
-            // The next symbol will be the opening parenthesis.
-            Bracket openParenthesis = this.GetBracketToken(CsTokenType.OpenParenthesis, SymbolType.OpenParenthesis, expressionReference);
-            Node<CsToken> openParenthesisNode = this.tokens.InsertLast(openParenthesis);
+            Expression expression;
 
-            // Get the inner expression.
-            LiteralExpression typeTokenExpression = this.GetTypeTokenExpression(expressionReference, unsafeCode, true);
-            if (typeTokenExpression == null)
+            if (this.PeekNextSymbol(SkipSymbols.All, false).SymbolType == SymbolType.OpenParenthesis)
             {
-                throw this.CreateSyntaxException();
+
+                // The next symbol will be the opening parenthesis.
+                Bracket openParenthesis = this.GetBracketToken(CsTokenType.OpenParenthesis, SymbolType.OpenParenthesis, expressionReference);
+                Node<CsToken> openParenthesisNode = this.tokens.InsertLast(openParenthesis);
+
+                // Get the inner expression.
+                LiteralExpression typeTokenExpression = this.GetTypeTokenExpression(expressionReference, unsafeCode, true);
+                if (typeTokenExpression == null)
+                {
+                    throw this.CreateSyntaxException();
+                }
+
+                // Get the closing parenthesis.
+                Bracket closeParenthesis = this.GetBracketToken(CsTokenType.CloseParenthesis, SymbolType.CloseParenthesis, expressionReference);
+                Node<CsToken> closeParenthesisNode = this.tokens.InsertLast(closeParenthesis);
+
+                openParenthesis.MatchingBracketNode = closeParenthesisNode;
+                closeParenthesis.MatchingBracketNode = openParenthesisNode;
+
+                // Create the token list for the method invocation expression.
+                CsTokenList partialTokens = new CsTokenList(this.tokens, firstTokenNode, this.tokens.Last);
+
+                // Create and return the expression.
+                expression = new DefaultValueExpression(partialTokens, typeTokenExpression, parentReference);
+            }
+            else
+            {
+                // Create the token list for the method invocation expression.
+                CsTokenList partialTokens = new CsTokenList(this.tokens, firstTokenNode, this.tokens.Last);
+
+                expression = new DefaultLiteralExpression(partialTokens, parentReference);
             }
 
-            // Get the closing parenthesis.
-            Bracket closeParenthesis = this.GetBracketToken(CsTokenType.CloseParenthesis, SymbolType.CloseParenthesis, expressionReference);
-            Node<CsToken> closeParenthesisNode = this.tokens.InsertLast(closeParenthesis);
-
-            openParenthesis.MatchingBracketNode = closeParenthesisNode;
-            closeParenthesis.MatchingBracketNode = openParenthesisNode;
-
-            // Create the token list for the method invocation expression.
-            CsTokenList partialTokens = new CsTokenList(this.tokens, firstTokenNode, this.tokens.Last);
-
-            // Create and return the expression.
-            DefaultValueExpression expression = new DefaultValueExpression(partialTokens, typeTokenExpression, parentReference);
             expressionReference.Target = expression;
 
             return expression;
@@ -1962,7 +1976,10 @@ namespace StyleCop.CSharp
 
                     if (nextSymbol.SymbolType == SymbolType.Other)
                     {
-                        matchVariable = this.GetNextExpression(ExpressionPrecedence.Primary, parentReference, unsafeCode);
+                        if ((previousPrecedence != ExpressionPrecedence.Query))
+                        {
+                            matchVariable = this.GetNextExpression(ExpressionPrecedence.Primary, parentReference, unsafeCode);
+                        }
                     }
                 }
 

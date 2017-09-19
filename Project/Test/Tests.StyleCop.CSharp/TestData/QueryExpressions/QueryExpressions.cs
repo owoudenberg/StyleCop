@@ -85,6 +85,11 @@ namespace StyleCop.CSharpParserTest.TestData
             // Bug 6711 This was failing because the check for casting thought b.Equals was a cast of select
             var a = (from b in new int[] { 1, 2, 3, 4, 5}
             where true != (b.Equals)select b).First();
+
+            // A query expression with a filter on type
+            from itm in new int[] { 1, 2, 3, 4, 5 }
+            where itm is int
+            select itm;
         }
     }
 }

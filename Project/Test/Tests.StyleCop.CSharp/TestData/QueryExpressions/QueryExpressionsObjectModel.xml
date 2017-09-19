@@ -328,7 +328,28 @@
                 </Expression>
               </Expression>
             </Expression>
-          </Statement> 
+          </Statement>
+          <Statement Type="ExpressionStatement">
+            <Expression Type="QueryExpression">
+              <Expression Type="NewArrayExpression">
+                <Expression Type="ArrayAccessExpression">
+                  <Expression Text="int" Type="LiteralExpression" />
+                </Expression>
+                <Expression Type="ArrayInitializerExpression">
+                  <Expression Text="1" Type="LiteralExpression" />
+                  <Expression Text="2" Type="LiteralExpression" />
+                  <Expression Text="3" Type="LiteralExpression" />
+                  <Expression Text="4" Type="LiteralExpression" />
+                  <Expression Text="5" Type="LiteralExpression" />
+                </Expression>
+              </Expression>
+              <Expression Type="IsExpression">
+                <Expression Text="itm" Type="LiteralExpression" />
+                <Expression Text="int" Type="LiteralExpression" />
+              </Expression>
+              <Expression Text="itm" Type="LiteralExpression" />
+            </Expression>
+          </Statement>
         </Element>
       </Element>
     </Element>
